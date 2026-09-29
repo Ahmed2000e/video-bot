@@ -1,4 +1,5 @@
 import os
+import re
 import telebot
 import yt_dlp
 
@@ -11,11 +12,13 @@ def send_welcome(bot_message):
 
 @bot.message_handler(func=lambda message: True)
 def download_video(message):
-    url = message.text
-    if not url.startswith('http'):
+    text = message.text
+    url_match = re.search(r'https?://[^\s]+', text)
+    if not url_match:
         bot.reply_to(message, "الرجاء إرسال رابط صحيح يبدأ بـ http أو https")
         return
-
+    
+    url = url_match.group(0)
     msg = bot.reply_to(message, "⏳ جاري المعالجة والتحميل، يرجى الانتظار...")
 
     ydl_opts = {
